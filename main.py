@@ -349,7 +349,7 @@ def console_listener_thread():
                 save_state()
             elif command in ["exit", "quit"]:
                 # Принудительное завершение
-                os._exit(0)
+                os._exit("Вы произвели ручную остановку")
             else:
                 print("Неизвестная команда.")
         except EOFError:
