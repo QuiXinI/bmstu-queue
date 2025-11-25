@@ -2,6 +2,7 @@ import json
 import threading
 from datetime import datetime
 from pytz import timezone as pytz_timezone
+
 import config_loader
 
 # --- ГЛОБАЛЬНОЕ СОСТОЯНИЕ ОЧЕРЕДИ ---
@@ -13,13 +14,12 @@ current_session = {
     "active": False,
     "message_id": None,
     "chat_id": None,
-    "start_time": None, # datetime object in memory, string in JSON
+    "start_time": None,
     "queues": {},
     "config": {}
 }
 
 # --- СЕРИАЛИЗАЦИЯ ВРЕМЕНИ ДЛЯ JSON ---
-
 def dt_to_str(dt_obj):
     """Преобразование datetime в строку ISO для сохранения."""
     return dt_obj.isoformat() if dt_obj else None
@@ -29,18 +29,15 @@ def str_to_dt(dt_str, tz_name="UTC"):
     if not dt_str: return None
     try:
         dt = datetime.fromisoformat(dt_str)
-        # Убедимся, что время в правильном часовом поясе
         return dt.astimezone(pytz_timezone(tz_name))
     except ValueError:
         return None
 
 # --- ПОСТОЯННОЕ ХРАНЕНИЕ ---
-
 def save_state():
     """Сохраняет текущее состояние очереди в JSON файл."""
     with queue_lock:
         data_to_save = current_session.copy()
-        # Преобразуем datetime в строку перед сохранением
         data_to_save['start_time'] = dt_to_str(data_to_save['start_time'])
 
         try:
@@ -57,11 +54,9 @@ def load_state():
         with open(STATE_FILE, "r", encoding="utf-8") as f:
             loaded_data = json.load(f)
 
-        # Получаем часовой пояс для корректного преобразования времени
         tz_name = loaded_data.get('config', {}).get('timezone', 'UTC')
         loaded_data['start_time'] = str_to_dt(loaded_data.get('start_time'), tz_name)
 
-        # Обновляем глобальное состояние
         current_session.update(loaded_data)
         print(f"[{datetime.now().strftime('%H:%M:%S')}] Состояние очереди успешно загружено.")
 
@@ -69,7 +64,6 @@ def load_state():
     except FileNotFoundError:
         print(
             f"[{datetime.now().strftime('%H:%M:%S')}] Файл состояния {STATE_FILE} не найден. Начинаем с чистого листа.")
-        # Инициализируем конфиг из config.json, чтобы он был доступен
         current_session["config"] = config_loader.load_config() or {}
         return False
     except Exception as e:
