@@ -369,7 +369,9 @@ if __name__ == "__main__":
     schedule_day = config.get("schedule_day")
     schedule_time_str = config.get("schedule_time")
     timezone_str = config.get("timezone")
-    update_delay = config.get("update_delay_minutes", 0)  # Читаем задержку
+    # Читаем оба параметра задержки
+    update_delay = config.get("update_delay_minutes", 0)
+    save_interval = config.get("save_delay_minutes", 60) # <--- Чтение интервала автосохранения
 
     # Проверка обязательных полей
     if not all([chat_id, schedule_day, schedule_time_str, timezone_str]):
@@ -411,11 +413,12 @@ if __name__ == "__main__":
     )
     scheduler.add_job(job_wrapper, trigger=trigger_weekly, id="weekly_queue")
 
-    # Задача для периодического сохранения состояния (раз в час)
-    scheduler.add_job(save_state, 'interval', hours=1, id="hourly_save")
+    # Задача для периодического сохранения состояния (используем save_interval)
+    scheduler.add_job(save_state, 'interval', minutes=save_interval, id="periodic_save") # <--- Использование save_interval
 
     print(f"Бот запущен. Расписание: {schedule_day} {schedule_time_str} ({timezone_str})")
     print(f"Задержка обновления UI/первого сохранения: {update_delay} мин.")
+    print(f"Интервал автосохранения на диск: {save_interval} мин.") # <--- Добавила вывод для контроля
 
     scheduler.start()
 
