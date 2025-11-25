@@ -11,7 +11,7 @@ def console_listener_thread():
             command = input("> ").strip().lower()
             if command in ["clear", "clean"]:
                 queue_logic.clear_queues_and_update()
-            elif command == ["save", "backup", "store", "safe", "ave", "sav", "save/"]:
+            elif command in ["save", "backup", "store", "safe", "ave", "sav", "save/"]:
                 state_manager.save_state()
             elif command in ["exit", "quit"]:
                 state_manager.save_state()

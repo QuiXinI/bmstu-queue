@@ -19,17 +19,18 @@ def get_user_display_name(user):
     first = user.first_name or ""
     last = user.last_name or ""
     username = f" (@{user.username})" if user.username else ""
-    return f"{first} {last}{username}".strip()
+    return f"{first} {last}{username}".strip().replace("_", "").replace("*", "").replace("`", "").replace("~", "")
+
 
 
 def generate_message_text(queues_data):
     """Генерирует текст сообщения со списками"""
-    text = "📅 **Запись к преподавателям**\n\n"
+    text = f"📅 Запись к преподавателям\nПервые {5} минут визуальных обновлений списка не будет\nДля выхода из очереди повторно нажмите на препода, к которому записаны\n\n"
 
     for teacher, users in queues_data.items():
-        text += f"🎓 **{teacher}**:\n"
+        text += f"🎓 {teacher}:\n"
         if not users:
-            text += "_Очередь пуста_\n"
+            text += "Очередь формируется\n"
         else:
             for idx, user_data in enumerate(users, 1):
                 text += f"{idx}. {user_data['display_name']}\n"
