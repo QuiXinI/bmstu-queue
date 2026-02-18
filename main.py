@@ -3,6 +3,7 @@ import threading
 from datetime import datetime
 
 import telebot
+from telebot import apihelper
 from dotenv import load_dotenv
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.cron import CronTrigger
@@ -20,6 +21,12 @@ if not BOT_TOKEN:
     print("Ошибка: BOT_TOKEN не найден в файле .env")
     exit(1)
 
+PROXY_URL = "socks5://qHOlLAspwn:ubnIcwPODe@103.82.103.120:39846"
+apihelper.proxy = {
+    'https': PROXY_URL,
+    'http': PROXY_URL
+}
+
 bot = telebot.TeleBot(BOT_TOKEN)
 
 queue_logic.init_queue_logic(bot)
@@ -28,7 +35,9 @@ queue_logic.init_queue_logic(bot)
 # --- ГЛАВНАЯ ЛОГИКА ---
 if __name__ == "__main__":
     config = config_loader.load_config()
-    if not config: exit("Нет конфига")
+    if not config:
+        print("Ошибка: Не удалось загрузить конфигурацию (config.json).")
+        exit(1)
 
     chat_id = config.get("chat_id")
     topic_id = config.get("topic_id", 0)
@@ -48,7 +57,7 @@ if __name__ == "__main__":
     try:
         datetime.strptime(schedule_time_str, "%H:%M")
     except ValueError:
-        print("Ошибка формата времени.")
+        print(f"Ошибка: Некорректный формат времени '{schedule_time_str}'. Используйте ЧЧ:ММ.")
         exit(1)
 
     state_manager.load_state()
@@ -80,7 +89,8 @@ if __name__ == "__main__":
 
     scheduler.add_job(state_manager.save_state, 'interval', minutes=save_interval, id="periodic_save")
 
-    print(f"Бот запущен. Расписание: {schedule_day} {schedule_time_str} ({timezone_str})")
+    print(f"Бот запущен с использованием прокси.")
+    print(f"Расписание: {schedule_day} {schedule_time_str} ({timezone_str})")
     print(f"Задержка обновления UI/первого сохранения: {update_delay} мин.")
     print(f"Интервал автосохранения на диск: {save_interval} мин.")
     print(f"Перенос старой очереди: {'Включен' if keep_queue == 1 else 'Отключен'}")
