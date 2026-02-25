@@ -18,8 +18,7 @@ load_dotenv()
 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 if not BOT_TOKEN:
-    print("Ошибка: BOT_TOKEN не найден в файле .env")
-    exit(1)
+    exit("Ошибка: BOT_TOKEN не найден в файле .env")
 
 PROXY_URL = "socks5://qHOlLAspwn:ubnIcwPODe@103.82.103.120:39846"
 apihelper.proxy = {
