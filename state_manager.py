@@ -71,5 +71,5 @@ def load_state():
         return False
 
 def get_current_session():
-    """Возвращает текущий объект сессии."""
+    """Возвращает текущий объект сессии. Является чистокровным костылём."""
     return current_session
