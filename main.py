@@ -50,8 +50,7 @@ if __name__ == "__main__":
 
     # Проверка обязательных полей
     if not all([chat_id, teachers]):
-        print("Ошибка: Проверьте config.json - отсутствуют обязательные поля.")
-        exit(1)
+        exit("Ошибка: Проверьте config.json - отсутствуют обязательные поля.")
 
     try:
         datetime.strptime(schedule_time_str, "%H:%M")
