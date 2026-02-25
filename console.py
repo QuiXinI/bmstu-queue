@@ -15,8 +15,7 @@ def console_listener_thread():
                 state_manager.save_state()
             elif command in ["exit", "quit"]:
                 state_manager.save_state()
-                print(f"Вы выключили сервер командой {command}")
-                os._exit(0)
+                os._exit(f"Вы выключили сервер командой {command}")
             else:
                 print("Неизвестная команда.")
         except EOFError:
