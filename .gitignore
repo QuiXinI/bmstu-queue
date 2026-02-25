@@ -4,3 +4,5 @@ debug.py
 queue_state.json
 config.json
 .idea
+.idea/workspace.xml
+.idea/misc.xml
